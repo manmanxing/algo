@@ -42,7 +42,9 @@ func (list *SingleList) Init() {
 //添加结点到尾部的下一个结点或者头部
 //中间添加结点(头结点，尾结点]
 //index是结点下标，范围是[0,size]
-//默认插入时，index后面的元素全部往后移
+//若index == 0，那么是插入到头结点，此时需要根据size判断要不要修改tail
+//若index == size 且size > 0，那么是插入到尾节点的下一个节点
+//若 0<index<= size-1 ，那么是插入到（头结点,尾结点]的位置
 func (list *SingleList) Insert(node *SingleNode, index uint) (bool, error) {
 	if node == nil {
 		return false, errors.New("node is nil")
@@ -54,11 +56,13 @@ func (list *SingleList) Insert(node *SingleNode, index uint) (bool, error) {
 	}
 	list.mutex.Lock()
 	defer list.mutex.Unlock()
-	if list.Size == 0 {
+	if index == 0 {
 		//说明插入的是头结点
+		if list.Size == 0 {
+			list.Tail = node
+		}
 		node.NextNode = list.Head
 		list.Head = node
-		list.Tail = node
 		list.Size++
 		return true, nil
 	}
@@ -85,25 +89,27 @@ func (list *SingleList) Insert(node *SingleNode, index uint) (bool, error) {
 
 //根据index删除结点
 //index是结点下标，范围是[0,size-1]
-//默认删除时，所有index后面的元素都往前移
-func (list *SingleList) Delete(index uint) bool {
+func (list *SingleList) Delete(index uint) (bool, error) {
 	if list == nil || list.Size == 0 || index > list.Size-1 || index < 0 {
-		return false
+		return false, nil
 	}
 	list.mutex.Lock()
 	defer list.mutex.Unlock()
 	if index == 0 {
 		//删除的是头结点
-		head := list.Head.NextNode
-		list.Head = head
 		//如果list的长度本来为1，那么表示list被删除
 		if list.Size == 1 {
+			list.Head = nil
 			list.Tail = nil
+			list.Size--
+			return true, nil
 		}
+		//说明删除头结点后，list还剩余结点
+		list.Head = list.Head.NextNode
 		list.Size--
-		return true
+		return true, nil
 	}
-	if index == list.Size-1 {
+	if index == list.Size-1 && list.Size > 1 {
 		//删除的是尾结点
 		//找到要删除的index的上一个结点
 		preNode := list.Head
@@ -114,7 +120,7 @@ func (list *SingleList) Delete(index uint) bool {
 		preNode.NextNode = nil
 		list.Tail = preNode
 		list.Size--
-		return true
+		return true, nil
 	}
 	//删除的是(头结点，尾结点)的范围
 	//找到要删除的index的上一个结点
@@ -125,7 +131,7 @@ func (list *SingleList) Delete(index uint) bool {
 	}
 	preNode.NextNode = preNode.NextNode.NextNode
 	list.Size--
-	return true
+	return true, nil
 }
 
 //根据index查询结点

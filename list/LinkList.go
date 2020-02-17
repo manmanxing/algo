@@ -41,10 +41,12 @@ func (list *DoubleList) Init() {
 	list.mutex = new(sync.RWMutex)
 }
 
-//插入到头结点或尾结点的下一个结点
-//插入到中间部分（头节点,尾节点]
+//添加结点到尾部的下一个结点或者头部
+//中间添加结点(头结点，尾结点]
 //index是结点下标，范围是[0,size]
-//默认插入时，index后面的结点全部往后移
+//若index == 0，那么是插入到头结点，此时需要根据size判断要不要修改tail
+//若index == size 且size > 0，那么是插入到尾节点的下一个节点
+//若 0<index<= size-1 ，那么是插入到（头结点,尾结点]的位置
 func (list *DoubleList) Insert(index uint, node *DoubleNode) (bool, error) {
 	if node == nil {
 		return false, errors.New("node is nil")
@@ -93,7 +95,6 @@ func (list *DoubleList) Insert(index uint, node *DoubleNode) (bool, error) {
 
 //根据index删除结点
 //index是结点下标，范围是[0,size-1]
-//默认删除时，所有index后面的元素都往前移
 func (list *DoubleList) Delete(index uint) (bool, error) {
 	if index > list.Size-1 || index < 0 {
 		return false, errors.New("out of range")

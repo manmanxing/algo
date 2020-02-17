@@ -2,9 +2,9 @@ package stackAndQueue
 
 import "algo/list"
 
-/*
-	栈的实现
-	使用单链表结构
+/**
+栈的实现
+使用单链表结构
 */
 
 //栈信息
