@@ -163,6 +163,8 @@ func (list *SingleList) Print() {
 	}
 }
 
+//单链表反转：示例一
+//空间复杂度是 O(1),时间复杂度为O(n)
 func Reverse(head *SingleNode) *SingleNode {
 	if head == nil {
 		return nil
@@ -173,4 +175,94 @@ func Reverse(head *SingleNode) *SingleNode {
 		pre, cur, cur.NextNode = cur, cur.NextNode, pre
 	}
 	return pre
+}
+
+//单链表反转：示例二
+//借助函数调用栈的思想，其实本质上也是一个栈。
+//参数是需要反转的单链表的头节点
+//返回的是单链表反转后的头节点
+func reverseByRecursion(head *SingleNode) *SingleNode {
+	if head == nil || head.NextNode == nil {
+		return head
+	}
+	newHead := reverseByRecursion(head.NextNode)
+	head.NextNode.NextNode = head
+	head.NextNode = nil
+	return newHead
+}
+
+//检测单链表是否有环
+func HasCycle(head *SingleNode) bool {
+	if nil != head {
+		slow := head
+		fast := head
+		for nil != fast && nil != fast.NextNode {
+			slow = slow.NextNode
+			fast = fast.NextNode.NextNode
+			if slow == fast {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+//求单链表环的长度
+func CycleLen(head *SingleNode) int {
+	len := 0
+	if nil != head {
+		slow := head
+		fast := head
+		for nil != fast && nil != fast.NextNode {
+			slow = slow.NextNode
+			fast = fast.NextNode.NextNode
+			len++
+			if slow == fast {
+				break
+			}
+		}
+	}
+	return len
+}
+
+//两个有序单链表的合并
+//将两个有序链表合并为一个新的有序链表并返回
+func mergeSortedList(l1, l2 *SingleNode) *SingleNode {
+	var res *SingleNode
+	if l1 == nil {
+		return l2
+	}
+	if l2 == nil {
+		return l1
+	}
+	//当l1节点的值大于l2节点的值，那么res指向l2的节点，从l2开始遍历，反之从l1开始
+	//使用递归，不断去找两个链表中比较小的元素，然后result接上那个元素
+	if l1.Data.(int) >= l2.Data.(int) {
+		res = l2
+		res.NextNode = mergeSortedList(l1, l2.NextNode)
+	} else {
+		res = l1
+		res.NextNode = mergeSortedList(l1.NextNode, l2)
+	}
+	return res
+}
+
+//获取单链表中间结点
+func FindMiddleNode(head *SingleNode) *SingleNode {
+	if nil == head || nil == head.NextNode {
+		return nil
+	}
+	if nil == head.NextNode.NextNode {
+		return head.NextNode
+	}
+
+	slow, fast := head, head
+	for nil != fast && nil != fast.NextNode {
+		//fast是等比数列，比值为2
+		//等fast移动到最后一个值或者超过最后一个值，也就是for循环条件不成立
+		//此时slow刚刚好移动到中间
+		slow = slow.NextNode
+		fast = fast.NextNode.NextNode
+	}
+	return slow
 }
