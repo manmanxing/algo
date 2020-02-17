@@ -8,24 +8,24 @@ import "algo/list"
 */
 
 type Queue struct {
-	list *main.SingleList
+	list *list.SingleList
 }
 
 //队列初始化
 func (q *Queue) Init() {
-	q.list = new(main.SingleList)
+	q.list = new(list.SingleList)
 	q.list.Init()
 }
 
 //入队
 //队尾插入
-func (q *Queue) Enqueue(node *main.SingleNode) (bool, error) {
+func (q *Queue) Enqueue(node *list.SingleNode) (bool, error) {
 	return q.list.Insert(node, q.list.Size)
 }
 
 //出队
 //队头取出
-func (q *Queue) Dequeue() *main.SingleNode {
+func (q *Queue) Dequeue() *list.SingleNode {
 	node := q.list.Find(0)
 	if node == nil {
 		return nil
@@ -35,7 +35,7 @@ func (q *Queue) Dequeue() *main.SingleNode {
 }
 
 //查看队头元素，并不删除
-func (q *Queue) Peek() *main.SingleNode {
+func (q *Queue) Peek() *list.SingleNode {
 	node := q.list.Find(0)
 	if node == nil {
 		return nil

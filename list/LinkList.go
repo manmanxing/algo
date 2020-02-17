@@ -156,6 +156,7 @@ func (list *DoubleList) Find(index uint) *DoubleNode {
 	return node.NextNode
 }
 
+//打印双向链表
 func (list *DoubleList) Print() {
 	if list == nil || list.Size == 0 {
 		fmt.Println("doubleList is nil or empty")
@@ -169,47 +170,4 @@ func (list *DoubleList) Print() {
 		fmt.Println("data is ", node.Data)
 		node = node.NextNode
 	}
-}
-
-func main() {
-	list := new(DoubleList)
-	list.Init()
-	//插入结点
-	//头结点
-	_, err := list.Insert(0, &DoubleNode{
-		Data:     1,
-		PrevNode: nil,
-		NextNode: nil,
-	})
-	if err != nil {
-		fmt.Println("list insert err:", err)
-	}
-	//尾结点
-	_, err = list.Insert(list.Size, &DoubleNode{
-		Data:     3,
-		PrevNode: nil,
-		NextNode: nil,
-	})
-	if err != nil {
-		fmt.Println("list insert err:", err)
-	}
-	//中间结点
-	_, err = list.Insert(list.Size-1, &DoubleNode{
-		Data:     2,
-		PrevNode: nil,
-		NextNode: nil,
-	})
-	if err != nil {
-		fmt.Println("list insert err:", err)
-	}
-	//打印结点
-	list.Print()
-	//查询结点
-	fmt.Println("查询：", list.Find(list.Size-1).Data)
-	//删除结点
-	_, err = list.Delete(0)
-	if err != nil {
-		fmt.Println("list delete err:", err)
-	}
-	list.Print()
 }

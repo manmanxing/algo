@@ -1,5 +1,7 @@
 package stackAndQueue
 
+import "algo/list"
+
 /*
 	栈的实现
 	使用单链表结构
@@ -12,19 +14,19 @@ type Stack struct {
 
 //栈的初始化
 func (s *Stack) Init() {
-	s.list = new(main.SingleList)
+	s.list = new(list.SingleList)
 	s.list.Init()
 }
 
 //入栈
 //这里将单链表的头结点看作栈顶
-func (s *Stack) Push(node *main.SingleNode) (bool, error) {
+func (s *Stack) Push(node *list.SingleNode) (bool, error) {
 	ok, err := s.list.Insert(node, 0)
 	return ok, err
 }
 
 //出栈
-func (s *Stack) Pop() *main.SingleNode {
+func (s *Stack) Pop() *list.SingleNode {
 	node := s.list.Find(0)
 	if node == nil {
 		return nil
@@ -34,7 +36,7 @@ func (s *Stack) Pop() *main.SingleNode {
 }
 
 //查看栈顶结点
-func (s *Stack) Peek() *main.SingleNode {
+func (s *Stack) Peek() *list.SingleNode {
 	node := s.list.Find(0)
 	if node == nil {
 		return nil
