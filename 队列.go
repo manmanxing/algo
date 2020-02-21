@@ -1,6 +1,4 @@
-package stackAndQueue
-
-import "algo/list"
+package main
 
 /**
 队列
@@ -8,24 +6,24 @@ import "algo/list"
 */
 
 type Queue struct {
-	list *list.SingleList
+	list *SingleList
 }
 
 //队列初始化
 func (q *Queue) Init() {
-	q.list = new(list.SingleList)
+	q.list = new(SingleList)
 	q.list.Init()
 }
 
 //入队
 //队尾插入
-func (q *Queue) Enqueue(node *list.SingleNode) (bool, error) {
+func (q *Queue) Enqueue(node *SingleNode) (bool, error) {
 	return q.list.Insert(node, q.list.Size)
 }
 
 //出队
 //队头取出
-func (q *Queue) Dequeue() *list.SingleNode {
+func (q *Queue) Dequeue() *SingleNode {
 	node := q.list.Find(0)
 	if node == nil {
 		return nil
@@ -35,7 +33,7 @@ func (q *Queue) Dequeue() *list.SingleNode {
 }
 
 //查看队头元素，并不删除
-func (q *Queue) Peek() *list.SingleNode {
+func (q *Queue) Peek() *SingleNode {
 	node := q.list.Find(0)
 	if node == nil {
 		return nil

@@ -1,6 +1,4 @@
-package stackAndQueue
-
-import "algo/list"
+package main
 
 /**
 栈的实现
@@ -9,24 +7,24 @@ import "algo/list"
 
 //栈信息
 type Stack struct {
-	list *list.SingleList
+	list *SingleList
 }
 
 //栈的初始化
 func (s *Stack) Init() {
-	s.list = new(list.SingleList)
+	s.list = new(SingleList)
 	s.list.Init()
 }
 
 //入栈
 //这里将单链表的头结点看作栈顶
-func (s *Stack) Push(node *list.SingleNode) (bool, error) {
+func (s *Stack) Push(node *SingleNode) (bool, error) {
 	ok, err := s.list.Insert(node, 0)
 	return ok, err
 }
 
 //出栈
-func (s *Stack) Pop() *list.SingleNode {
+func (s *Stack) Pop() *SingleNode {
 	node := s.list.Find(0)
 	if node == nil {
 		return nil
@@ -36,7 +34,7 @@ func (s *Stack) Pop() *list.SingleNode {
 }
 
 //查看栈顶结点
-func (s *Stack) Peek() *list.SingleNode {
+func (s *Stack) Peek() *SingleNode {
 	node := s.list.Find(0)
 	if node == nil {
 		return nil
