@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"sync"
 	"time"
 )
@@ -44,30 +43,11 @@ func (c *Counter)Reset(t time.Time)  {
 
 //初始化
 func (c *Counter)Set(rate int,cycle time.Duration)  {
+	if rate < 0 {
+		return
+	}
 	c.Rate = rate
 	c.Begin = time.Now()
 	c.Cycle = cycle
 	c.Count = 0
-}
-
-
-func main() {
-	var wg sync.WaitGroup
-	c := new(Counter)
-	//1s内最多允许请求3次
-	c.Set(3,time.Second)
-	for i:=0;i<10;i++{
-		wg.Add(1)
-		fmt.Println("创建请求:",i)
-		go func(i int) {
-			defer wg.Done()
-			if c.Allow() {
-				fmt.Println("响应请求:",i)
-			}else {
-				fmt.Println("拒绝请求:",i)
-			}
-		}(i)
-		time.Sleep(time.Millisecond * 200)
-	}
-	wg.Wait()
 }
