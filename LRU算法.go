@@ -1,32 +1,45 @@
 package main
 
-import "errors"
-
-//使用双向链表实现
-//使用 map，实现查找结点时间复杂度为 O(1)
-//假设双向结点中保存的值为 整型
+import (
+	"errors"
+	"sync"
+)
 
 type LRUCache struct {
-	Size  int //最大长度,初始化时，此值必须 >0
-	Nodes map[int]*DoubleNode
-	Head  *DoubleNode
-	Tail  *DoubleNode
+	Size     int //lru的长度 , Size <= Capacity
+	Capacity int //lru的容量 ,初始化时，此值必须 >0
+	Head     *DoubleNode
+	Tail     *DoubleNode
+	mutex    *sync.Mutex                 //读写并发控制
+	Nodes    map[interface{}]*DoubleNode //map的key就是DoubleNode里的key，实现查找结点时间复杂度为 O(1)
 }
 
 //初始化
-func (lru *LRUCache) Init(capacity int) {
-	lru.Nodes = make(map[int]*DoubleNode, capacity)
-	lru.Size = capacity
+func InitLRU(capacity int) (lru *LRUCache, err error) {
+	if capacity <= 0 {
+		return nil, errors.New("capacity <= 0")
+	}
+	lru = new(LRUCache)
+	lru.Nodes = make(map[interface{}]*DoubleNode, capacity)
+	lru.Size = 0
+	lru.Capacity = capacity
+	//懒加载
 	lru.Head = nil
 	lru.Tail = nil
+	return
 }
 
 //查询
 //如果密钥 (key) 存在于缓存中，则获取密钥的值,然后将查询的结点放置表头，否则返回 -1
-func (lru *LRUCache) Find(key int) int {
+func (lru *LRUCache) Find(key interface{}) interface{} {
+	lru.mutex.Lock()
+	defer func() {
+		lru.mutex.Unlock()
+	}()
+
 	if v, ok := lru.Nodes[key]; ok {
 		lru.removeNodeToFirst(v)
-		return v.Data.(int)
+		return v
 	}
 	return -1
 }
@@ -34,51 +47,61 @@ func (lru *LRUCache) Find(key int) int {
 //新增
 //会直接插入到链表头部
 //需要判断容量是否够用，不够就移除掉尾结点再插入新结点
-func (lru *LRUCache) Insert(k int, value int) error {
-	if lru.Size <= 0 {
-		return errors.New("lru size <= 0")
-	}
-	node := &DoubleNode{
-		Data:     value,
-		PrevNode: nil,
-		NextNode: nil,
-	}
-	if lru.Tail == nil && lru.Head == nil {
-		//如果是空的双向链表
-		lru.Tail = node
-		lru.Head = node
-		lru.Nodes[k] = node
-		return nil
-	}
-	//如果不是空的双向链表
-	if len(lru.Nodes) == lru.Size {
+func (lru *LRUCache) Insert(k interface{}, value *DoubleNode) {
+	lru.mutex.Lock()
+	defer func() {
+		lru.mutex.Unlock()
+	}()
+
+	//首先判断是否超容
+	if lru.Size >= lru.Capacity {
 		//说明map存满了
 		lru.removeLastNode()
 	}
-	lru.Head.PrevNode = node
-	node.NextNode = lru.Head
-	lru.Head = node
-	lru.Nodes[k] = node
-	return nil
+	//如果是空的双向链表
+	if lru.Tail == nil && lru.Head == nil {
+		lru.Tail = value
+		lru.Head = value
+		lru.Nodes[k] = value
+		lru.Size++
+		return
+	}
+
+	//插入到头部
+	lru.Head.PrevNode = value
+	value.NextNode = lru.Head
+	value.PrevNode = nil
+	lru.Head = value
+	lru.Nodes[k] = value
+	lru.Size ++
+	return
 }
 
 //将指定的结点移向表头
 func (lru *LRUCache) removeNodeToFirst(node *DoubleNode) {
+	preNode := node.PrevNode
+	preNode.NextNode = node.NextNode
+	node.NextNode.PrevNode = preNode
 	node.PrevNode = nil
 	node.NextNode = lru.Head
 	lru.Head.PrevNode = node
+	lru.Head = node
 }
 
-//移除最后有一个结点
-//需要判断链表的长度
+//移除最后一个node
 func (lru *LRUCache) removeLastNode() {
-	if len(lru.Nodes) == 1 {
-		delete(lru.Nodes, lru.Tail.Data.(int))
+
+	if lru.Size <= 0 {
+		return
+	}
+	if lru.Size == 1 {
+		delete(lru.Nodes,lru.Tail.Key)
 		lru.Head = nil
 		lru.Tail = nil
 		return
 	}
-	delete(lru.Nodes, lru.Tail.Data.(int))
+
+	delete(lru.Nodes, lru.Tail.Key)
 	lru.Tail = lru.Tail.PrevNode
 	lru.Tail.NextNode = nil
 }
