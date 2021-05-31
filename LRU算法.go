@@ -73,7 +73,7 @@ func (lru *LRUCache) Insert(k interface{}, value *DoubleNode) {
 	value.PrevNode = nil
 	lru.Head = value
 	lru.Nodes[k] = value
-	lru.Size ++
+	lru.Size++
 	return
 }
 
@@ -95,13 +95,15 @@ func (lru *LRUCache) removeLastNode() {
 		return
 	}
 	if lru.Size == 1 {
-		delete(lru.Nodes,lru.Tail.Key)
+		delete(lru.Nodes, lru.Tail.Key)
 		lru.Head = nil
 		lru.Tail = nil
+		lru.Size--
 		return
 	}
 
 	delete(lru.Nodes, lru.Tail.Key)
 	lru.Tail = lru.Tail.PrevNode
 	lru.Tail.NextNode = nil
+	lru.Size--
 }
