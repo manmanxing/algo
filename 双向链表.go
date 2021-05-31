@@ -24,9 +24,9 @@ type DoubleNode struct {
 //双链表
 type DoubleList struct {
 	mutex *sync.Mutex //并发控制
-	Head  *DoubleNode   //头结点，双链表的第一个结点
-	Tail  *DoubleNode   //尾结点，双链表的最后一个结点
-	Size  int           //双链表长度
+	Head  *DoubleNode //头结点，双链表的第一个结点
+	Tail  *DoubleNode //尾结点，双链表的最后一个结点
+	Size  int         //双链表长度
 }
 
 func InitDoubleNode(k, v interface{}) *DoubleNode {
@@ -56,6 +56,9 @@ func InitDoubleList(size int) (list *DoubleList, err error) {
 
 //打印双向链表
 func (list *DoubleList) String() string {
+	list.mutex.Lock()
+	defer list.mutex.Unlock()
+
 	result := ""
 	if list == nil || list.Size == 0 {
 		result = "doubleList is nil or empty"
@@ -74,118 +77,130 @@ func (list *DoubleList) String() string {
 	return result
 }
 
-//添加结点到尾部的下一个结点或者头部
-//中间添加结点(头结点，尾结点]
-//index是结点下标，范围是[0,size]
-//若index == 0，那么是插入到头结点，此时需要根据size判断要不要修改tail
-//若index == size 且size > 0，那么是插入到尾节点的下一个节点
-//若 0<index<= size-1 ，那么是插入到（头结点,尾结点]的位置
-func (list *DoubleList) Insert(index int, node *DoubleNode) (bool, error) {
+//在双向链表中的头结点后添加节点
+func (list *DoubleList) AddHead(node *DoubleNode) {
+	list.mutex.Lock()
+	defer list.mutex.Unlock()
+
 	if node == nil {
-		return false, errors.New("node is nil")
+		return
 	}
-	if index > list.Size || index < 0 {
-		//说明越界
-		return false, errors.New("out of range")
-	}
-	list.mutex.Lock()
-	defer list.mutex.Unlock()
-	if index == 0 {
-		//说明插入的是头结点
-		if list.Size == 0 {
-			//此时list没有结点
-			list.Tail = node
-		}
-		node.NextNode = list.Head
+	if list.Head == nil {
 		list.Head = node
-		list.Head.PrevNode = nil
-		list.Size++
-		return true, nil
-	}
-	if index == list.Size && list.Size > 0 {
-		//说明是插入到尾结点的下一个结点
-		node.PrevNode = list.Tail
-		list.Tail.NextNode = node
 		list.Tail = node
+		list.Head.PrevNode = nil
+		list.Tail.NextNode = nil
 		list.Size++
-		return true, nil
+		return
 	}
-	//说明插入的是（头结点,尾结点]的位置
-	var i int
-	preNode := list.Head
-	//获取index的上一个结点
-	for i = 1; i <= index-1; i++ {
-		preNode = preNode.NextNode
-	}
-	next := preNode.NextNode
-	node.PrevNode = preNode
-	node.NextNode = next
-	preNode.NextNode = node
-	next.PrevNode = node
+
+	list.Head.PrevNode = node
+	node.NextNode = list.Head
+	list.Head = node
+	list.Head.PrevNode = nil
 	list.Size++
-	return true, nil
+	return
 }
 
-//根据index删除结点
-//index是结点下标，范围是[0,size-1]
-func (list *DoubleList) Delete(index int) (bool, error) {
-	if index > list.Size-1 || index < 0 {
-		return false, errors.New("out of range")
-	}
-	if list == nil {
-		return false, errors.New("DoubleList is nil")
-	}
+//在双向链表中的尾节点后添加节点
+func (list *DoubleList) AddTail(node *DoubleNode) {
 	list.mutex.Lock()
 	defer list.mutex.Unlock()
-	if index == 0 {
-		//说明删除的是头结点
-		if list.Size == 1 {
-			//此时删除后，list 没有结点
-			list.Head = nil
-			list.Tail = nil
-			list.Size--
-			return true, nil
-		}
-		//说明删除头结点后，list 还剩余结点
-		list.Head = list.Head.NextNode
+
+	if node == nil {
+		return
+	}
+	if list.Tail == nil {
+		list.Head = node
+		list.Tail = node
 		list.Head.PrevNode = nil
-		list.Size--
-		return true, nil
-	}
-	if index == list.Size-1 && list.Size > 1 {
-		//说明删除的是尾节点
-		list.Tail = list.Tail.PrevNode
 		list.Tail.NextNode = nil
-		list.Size--
-		return true, nil
+		list.Size++
+		return
 	}
-	//说明删除的是中间结点(头结点，尾结点)
-	var i int
-	node := list.Head
-	//找到要删除的结点的上一个结点
-	for i = 1; i <= index-1; i++ {
-		node = node.NextNode
-	}
-	node.NextNode = node.NextNode.NextNode
-	node.NextNode.PrevNode = node
-	return true, nil
+
+	list.Tail.NextNode = node
+	node.PrevNode = list.Tail
+	list.Tail = node
+	list.Tail.NextNode = nil
+	list.Size++
+	return
 }
 
-//查询结点
-//index是结点下标，范围是[0,size-1]
-func (list *DoubleList) Find(index int) *DoubleNode {
-	if list == nil || index > list.Size-1 || index < 0 {
-		return nil
+//删除头节点
+func (list *DoubleList) RemoveHead() {
+	list.mutex.Lock()
+	defer list.mutex.Unlock()
+
+	if list.Head == nil {
+		return
 	}
-	if index == 0 {
-		//查询的是头结点
-		return list.Head
+
+	if list.Size == 1 {
+		list.Head = nil
+		list.Tail = nil
+		list.Size--
+		return
 	}
-	var i int
-	node := list.Head
-	//查询结点的上一个结点
-	for i = 1; i <= index-1; i++ {
-		node = node.NextNode
+	next := list.Head.NextNode
+	next.PrevNode = nil
+	list.Head = next
+	list.Size--
+	return
+}
+
+//删除尾节点
+func (list *DoubleList) RemoveTail() {
+	list.mutex.Lock()
+	defer list.mutex.Unlock()
+
+	if list.Tail == nil {
+		return
 	}
-	return node.NextNode
+
+	if list.Size == 1 {
+		list.Head = nil
+		list.Tail = nil
+		list.Size--
+		return
+	}
+
+	pre := list.Tail.PrevNode
+	pre.NextNode = nil
+	list.Tail = pre
+	list.Size --
+}
+
+//删除某一个双向链表中的节点
+func (list *DoubleList)Remove(node *DoubleNode)  {
+	list.mutex.Lock()
+	defer list.mutex.Unlock()
+
+	if list.Size <= 0 || node == nil{
+		return
+	}
+
+	if list.Head == node {
+		list.RemoveHead()
+		return
+	}
+
+	if list.Tail == node {
+		list.RemoveTail()
+		return
+	}
+
+	pre := node.PrevNode
+	next := node.NextNode
+	pre.NextNode = next
+	next.PrevNode = pre
+	list.Size --
+	return
+}
+
+//弹出头节点
+func (list *DoubleList)Pop()*DoubleNode  {
+	head := list.Head
+	list.RemoveHead()
+	return head
 }
