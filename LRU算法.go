@@ -47,34 +47,43 @@ func (lru *LRUCache) Find(key interface{}) interface{} {
 //新增
 //会直接插入到链表头部
 //需要判断容量是否够用，不够就移除掉尾结点再插入新结点
-func (lru *LRUCache) Insert(k interface{}, value *DoubleNode) {
+func (lru *LRUCache) Insert(key interface{}, value *DoubleNode) {
 	lru.mutex.Lock()
 	defer func() {
 		lru.mutex.Unlock()
 	}()
 
-	//首先判断是否超容
-	if lru.Size >= lru.Capacity {
-		//说明map存满了
-		lru.removeLastNode()
+	if key == nil || value == nil{
+		return
 	}
+
 	//如果是空的双向链表
 	if lru.Tail == nil && lru.Head == nil {
 		lru.Tail = value
 		lru.Head = value
-		lru.Nodes[k] = value
+		lru.Nodes[key] = value
 		lru.Size++
 		return
 	}
 
-	//插入到头部
-	lru.Head.PrevNode = value
-	value.NextNode = lru.Head
-	value.PrevNode = nil
-	lru.Head = value
-	lru.Nodes[k] = value
-	lru.Size++
-	return
+	if _,ok := lru.Nodes[key];ok{
+		lru.removeNodeToFirst(value)
+		return
+	}else {
+		//首先判断是否超容
+		if lru.Size >= lru.Capacity {
+			//说明map存满了
+			lru.removeLastNode()
+		}
+		//插入到头部
+		lru.Head.PrevNode = value
+		value.NextNode = lru.Head
+		value.PrevNode = nil
+		lru.Head = value
+		lru.Nodes[key] = value
+		lru.Size++
+		return
+	}
 }
 
 //将指定的结点移向表头
