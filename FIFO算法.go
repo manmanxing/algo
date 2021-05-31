@@ -34,6 +34,19 @@ func initFIFO(capacity int) (fifo *FIFOCache, err error) {
 	}, nil
 }
 
+func (fifo *FIFOCache)Get(key interface{})interface{}  {
+	fifo.mutex.Lock()
+	defer func() {
+		fifo.mutex.Unlock()
+	}()
+
+	if v,ok := fifo.Nodes[key];ok{
+		return v
+	}
+
+	return -1
+}
+
 func (fifo *FIFOCache) Put(key interface{}, value *DoubleNode) {
 	fifo.mutex.Lock()
 	defer func() {
