@@ -37,8 +37,12 @@ func (lru *LRUCache) Find(key interface{}) interface{} {
 		lru.mutex.Unlock()
 	}()
 
+	if key == nil {
+		return -1
+	}
+
 	if v, ok := lru.Nodes[key]; ok {
-		lru.removeNodeToFirst(v)
+		lru.removeNodeToHead(v)
 		return v
 	}
 	return -1
@@ -47,7 +51,7 @@ func (lru *LRUCache) Find(key interface{}) interface{} {
 //新增
 //会直接插入到链表头部
 //需要判断容量是否够用，不够就移除掉尾结点再插入新结点
-func (lru *LRUCache) Insert(key interface{}, value *DoubleNode) {
+func (lru *LRUCache) Add(key,value interface{}) {
 	lru.mutex.Lock()
 	defer func() {
 		lru.mutex.Unlock()
@@ -57,37 +61,41 @@ func (lru *LRUCache) Insert(key interface{}, value *DoubleNode) {
 		return
 	}
 
+	newNode := InitDoubleNode(key,value)
+
 	//如果是空的双向链表
 	if lru.Tail == nil && lru.Head == nil {
-		lru.Tail = value
-		lru.Head = value
-		lru.Nodes[key] = value
+		lru.Tail = newNode
+		lru.Head = newNode
+		lru.Nodes[key] = newNode
 		lru.Size++
 		return
 	}
 
-	if _,ok := lru.Nodes[key];ok{
-		lru.removeNodeToFirst(value)
+	//如果本身就存在，直接移到head
+	if v,ok := lru.Nodes[key];ok{
+		lru.removeNodeToHead(v)
 		return
 	}else {
+		//不存在
 		//首先判断是否超容
 		if lru.Size >= lru.Capacity {
 			//说明map存满了
 			lru.removeLastNode()
 		}
 		//插入到头部
-		lru.Head.PrevNode = value
-		value.NextNode = lru.Head
-		value.PrevNode = nil
-		lru.Head = value
-		lru.Nodes[key] = value
+		lru.Head.PrevNode = newNode
+		newNode.NextNode = lru.Head
+		newNode.PrevNode = nil
+		lru.Head = newNode
+		lru.Nodes[key] = newNode
 		lru.Size++
 		return
 	}
 }
 
 //将指定的结点移向表头
-func (lru *LRUCache) removeNodeToFirst(node *DoubleNode) {
+func (lru *LRUCache) removeNodeToHead(node *DoubleNode) {
 	preNode := node.PrevNode
 	preNode.NextNode = node.NextNode
 	node.NextNode.PrevNode = preNode
