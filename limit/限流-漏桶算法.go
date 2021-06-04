@@ -1,4 +1,4 @@
-package main
+package limit
 
 import (
 	"sync"
@@ -25,8 +25,8 @@ func (l *LeakyBucket) Allow() bool {
 	}
 	l.LastLeakMs = now
 	//判断水量
-	if l.Water + 1 <= l.Capacity {
-		l.Water ++
+	if l.Water+1 <= l.Capacity {
+		l.Water++
 		return true
 	} else {
 		return false

@@ -1,4 +1,4 @@
-package main
+package limit
 
 import (
 	"sync"
@@ -15,7 +15,7 @@ type TokenBucket struct {
 
 //先计算放入的token数量,需要判断token是否溢出
 //再计算剩余的token数量，如果 >= 0 返回 true，否则返回 false
-func (t *TokenBucket) Allow()bool {
+func (t *TokenBucket) Allow() bool {
 	now := time.Now().Unix()
 	addTokens := (now - t.LastTokenSec) * t.Rate
 	t.LastTokenSec = now
@@ -23,10 +23,10 @@ func (t *TokenBucket) Allow()bool {
 	if t.Tokens > t.Capacity {
 		t.Tokens = t.Capacity
 	}
-	if t.Tokens  > 0 {
-		t.Tokens --
+	if t.Tokens > 0 {
+		t.Tokens--
 		return true
-	}else {
+	} else {
 		//不足以获取这么多的 token
 		return false
 	}

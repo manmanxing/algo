@@ -1,14 +1,15 @@
-package main
+package cache
 
 import (
 	"errors"
 	"sync"
-)
 
+	"github.com/manmanxing/algo/structure"
+)
 
 //区别于普通的双向节点，LFU新增了一个频次参数
 type LFUDoubleNode struct {
-	*DoubleNode
+	*structure.DoubleNode
 	//访问频次
 	Freq int
 }
@@ -18,12 +19,12 @@ type LFUCache struct {
 	Capacity int                            //lfu的容量 ,初始化时，此值必须 >0
 	mutex    *sync.Mutex                    //读写并发控制
 	Nodes    map[interface{}]*LFUDoubleNode //map的key 是 LFUDoubleNode 里的 Key
-	FreMap   map[int]*DoubleList            //频次与对应的链表
+	FreMap   map[int]*structure.DoubleList  //频次与对应的链表
 }
 
 func InitLFUDoubleNode(key, value interface{}) *LFUDoubleNode {
 	return &LFUDoubleNode{
-		DoubleNode: InitDoubleNode(key, value),
+		DoubleNode: structure.InitDoubleNode(key, value),
 		Freq:       0,
 	}
 }
@@ -38,7 +39,7 @@ func InitLFU(capacity int) (lfu *LFUCache, err error) {
 		Capacity: capacity,
 		mutex:    new(sync.Mutex),
 		Nodes:    make(map[interface{}]*LFUDoubleNode, capacity),
-		FreMap:   make(map[int]*DoubleList),
+		FreMap:   make(map[int]*structure.DoubleList),
 	}, nil
 }
 
@@ -63,7 +64,7 @@ func (lfu *LFUCache) updateFreqForGet(node *LFUDoubleNode) {
 	node.Freq = freq
 
 	if _, ok := lfu.FreMap[freq]; !ok {
-		lfu.FreMap[freq], _ = InitDoubleList(10)
+		lfu.FreMap[freq], _ = structure.InitDoubleList(10)
 	}
 	lfu.FreMap[freq].AddHead(node.DoubleNode)
 }
@@ -76,7 +77,7 @@ func (lfu *LFUCache) updateFreqForAdd(node *LFUDoubleNode) {
 	}
 	node.Freq = 1
 	if _, ok := lfu.FreMap[node.Freq]; !ok {
-		lfu.FreMap[node.Freq], _ = InitDoubleList(10)
+		lfu.FreMap[node.Freq], _ = structure.InitDoubleList(10)
 	}
 	lfu.FreMap[node.Freq].AddHead(node.DoubleNode)
 	lfu.Size++
@@ -113,7 +114,7 @@ func (lfu *LFUCache) Add(key, value interface{}) {
 
 	if v, ok := lfu.Nodes[key]; ok {
 		//如果能找到
-		v.value = value
+		v.Value = value
 		lfu.updateFreqForGet(v)
 		return
 	} else {
@@ -140,7 +141,7 @@ func (lfu *LFUCache) Get(key interface{}) interface{} {
 	lfu.mutex.Lock()
 	defer lfu.mutex.Unlock()
 
-	if v,ok := lfu.Nodes[key];ok {
+	if v, ok := lfu.Nodes[key]; ok {
 		lfu.updateFreqForGet(v)
 	}
 

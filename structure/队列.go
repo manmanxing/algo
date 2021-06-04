@@ -1,4 +1,4 @@
-package main
+package structure
 
 /**
 队列

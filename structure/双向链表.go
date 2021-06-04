@@ -1,4 +1,4 @@
-package main
+package structure
 
 import (
 	"errors"
@@ -14,7 +14,7 @@ import (
 //结点除了自身的数据外，还必须有指向下一个结点的地址域和上一个结点的地址域
 type DoubleNode struct {
 	//数据域
-	Key, value interface{}
+	Key, Value interface{}
 	//上一个地址域
 	PrevNode *DoubleNode
 	//下一个地址域
@@ -32,12 +32,12 @@ type DoubleList struct {
 func InitDoubleNode(k, v interface{}) *DoubleNode {
 	return &DoubleNode{
 		Key:   k,
-		value: v,
+		Value: v,
 	}
 }
 
 func (node *DoubleNode) String() string {
-	return fmt.Sprintf("{%v:%v}", node.Key, node.value)
+	return fmt.Sprintf("{%v:%v}", node.Key, node.Value)
 }
 
 //初始化双链表
@@ -168,15 +168,15 @@ func (list *DoubleList) RemoveTail() {
 	pre := list.Tail.PrevNode
 	pre.NextNode = nil
 	list.Tail = pre
-	list.Size --
+	list.Size--
 }
 
 //删除某一个双向链表中的节点
-func (list *DoubleList)Remove(node *DoubleNode)  {
+func (list *DoubleList) Remove(node *DoubleNode) {
 	list.mutex.Lock()
 	defer list.mutex.Unlock()
 
-	if list.Size <= 0 || node == nil{
+	if list.Size <= 0 || node == nil {
 		return
 	}
 
@@ -194,12 +194,12 @@ func (list *DoubleList)Remove(node *DoubleNode)  {
 	next := node.NextNode
 	pre.NextNode = next
 	next.PrevNode = pre
-	list.Size --
+	list.Size--
 	return
 }
 
 //弹出头节点
-func (list *DoubleList)Pop()*DoubleNode  {
+func (list *DoubleList) Pop() *DoubleNode {
 	head := list.Head
 	list.RemoveHead()
 	return head

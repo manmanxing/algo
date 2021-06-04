@@ -1,8 +1,10 @@
-package main
+package cache
 
 import (
 	"errors"
 	"sync"
+
+	"github.com/manmanxing/algo/structure"
 )
 
 /**
@@ -14,10 +16,10 @@ Put(key,value)：如果Cache中存在该key，则重置value值；如果不存�
 type FIFOCache struct {
 	Size     int //fifo的长度 , Size <= Capacity
 	Capacity int //fifo的容量 ,初始化时，此值必须 >0
-	Head     *DoubleNode
-	Tail     *DoubleNode
-	mutex    *sync.Mutex                 //读写并发控制
-	Nodes    map[interface{}]*DoubleNode //map的key就是DoubleNode里的key，实现查找结点时间复杂度为 O(1)
+	Head     *structure.DoubleNode
+	Tail     *structure.DoubleNode
+	mutex    *sync.Mutex                           //读写并发控制
+	Nodes    map[interface{}]*structure.DoubleNode //map的key就是DoubleNode里的key，实现查找结点时间复杂度为 O(1)
 }
 
 func initFIFO(capacity int) (fifo *FIFOCache, err error) {
@@ -30,24 +32,24 @@ func initFIFO(capacity int) (fifo *FIFOCache, err error) {
 		Head:     nil,
 		Tail:     nil,
 		mutex:    new(sync.Mutex),
-		Nodes:    make(map[interface{}]*DoubleNode, capacity),
+		Nodes:    make(map[interface{}]*structure.DoubleNode, capacity),
 	}, nil
 }
 
-func (fifo *FIFOCache)Get(key interface{})interface{}  {
+func (fifo *FIFOCache) Get(key interface{}) interface{} {
 	fifo.mutex.Lock()
 	defer func() {
 		fifo.mutex.Unlock()
 	}()
 
-	if v,ok := fifo.Nodes[key];ok{
+	if v, ok := fifo.Nodes[key]; ok {
 		return v
 	}
 
 	return -1
 }
 
-func (fifo *FIFOCache) Put(key interface{}, value *DoubleNode) {
+func (fifo *FIFOCache) Put(key interface{}, value *structure.DoubleNode) {
 	fifo.mutex.Lock()
 	defer func() {
 		fifo.mutex.Unlock()
@@ -91,7 +93,7 @@ func (fifo *FIFOCache) removeLastNode() {
 }
 
 //添加node到头部
-func (fifo *FIFOCache) putToHead(key interface{}, value *DoubleNode) {
+func (fifo *FIFOCache) putToHead(key interface{}, value *structure.DoubleNode) {
 	if key == nil || value == nil {
 		return
 	}
@@ -100,5 +102,5 @@ func (fifo *FIFOCache) putToHead(key interface{}, value *DoubleNode) {
 	fifo.Head.PrevNode = value
 	fifo.Head = value
 	fifo.Nodes[key] = value
-	fifo.Size ++
+	fifo.Size++
 }

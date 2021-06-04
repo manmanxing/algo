@@ -1,4 +1,4 @@
-package main
+package limit
 
 import (
 	"sync"
@@ -25,24 +25,24 @@ func (c *Counter) Allow() bool {
 	if now.Sub(c.Begin) > c.Cycle {
 		c.Reset(now)
 		return true
-	}else {
-		if c.Count >= c.Rate -1{
+	} else {
+		if c.Count >= c.Rate-1 {
 			return false
-		}else {
-			c.Count ++
+		} else {
+			c.Count++
 			return true
 		}
 	}
 }
 
 //重置
-func (c *Counter)Reset(t time.Time)  {
+func (c *Counter) Reset(t time.Time) {
 	c.Begin = t
 	c.Count = 0
 }
 
 //初始化
-func (c *Counter)Set(rate int,cycle time.Duration)  {
+func (c *Counter) Set(rate int, cycle time.Duration) {
 	if rate < 0 {
 		return
 	}

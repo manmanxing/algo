@@ -1,17 +1,19 @@
-package main
+package cache
 
 import (
 	"errors"
 	"sync"
+
+	"github.com/manmanxing/algo/structure"
 )
 
 type LRUCache struct {
 	Size     int //lru的长度 , Size <= Capacity
 	Capacity int //lru的容量 ,初始化时，此值必须 >0
-	Head     *DoubleNode
-	Tail     *DoubleNode
-	mutex    *sync.Mutex                 //读写并发控制
-	Nodes    map[interface{}]*DoubleNode //map的key就是DoubleNode里的key，实现查找结点时间复杂度为 O(1)
+	Head     *structure.DoubleNode
+	Tail     *structure.DoubleNode
+	mutex    *sync.Mutex                           //读写并发控制
+	Nodes    map[interface{}]*structure.DoubleNode //map的key就是DoubleNode里的key，实现查找结点时间复杂度为 O(1)
 }
 
 //初始化
@@ -20,7 +22,7 @@ func InitLRU(capacity int) (lru *LRUCache, err error) {
 		return nil, errors.New("capacity <= 0")
 	}
 	lru = new(LRUCache)
-	lru.Nodes = make(map[interface{}]*DoubleNode, capacity)
+	lru.Nodes = make(map[interface{}]*structure.DoubleNode, capacity)
 	lru.Size = 0
 	lru.Capacity = capacity
 	//懒加载
@@ -51,17 +53,17 @@ func (lru *LRUCache) Find(key interface{}) interface{} {
 //新增
 //会直接插入到链表头部
 //需要判断容量是否够用，不够就移除掉尾结点再插入新结点
-func (lru *LRUCache) Add(key,value interface{}) {
+func (lru *LRUCache) Add(key, value interface{}) {
 	lru.mutex.Lock()
 	defer func() {
 		lru.mutex.Unlock()
 	}()
 
-	if key == nil || value == nil{
+	if key == nil || value == nil {
 		return
 	}
 
-	newNode := InitDoubleNode(key,value)
+	newNode := structure.InitDoubleNode(key, value)
 
 	//如果是空的双向链表
 	if lru.Tail == nil && lru.Head == nil {
@@ -73,10 +75,10 @@ func (lru *LRUCache) Add(key,value interface{}) {
 	}
 
 	//如果本身就存在，直接移到head
-	if v,ok := lru.Nodes[key];ok{
+	if v, ok := lru.Nodes[key]; ok {
 		lru.removeNodeToHead(v)
 		return
-	}else {
+	} else {
 		//不存在
 		//首先判断是否超容
 		if lru.Size >= lru.Capacity {
@@ -95,7 +97,7 @@ func (lru *LRUCache) Add(key,value interface{}) {
 }
 
 //将指定的结点移向表头
-func (lru *LRUCache) removeNodeToHead(node *DoubleNode) {
+func (lru *LRUCache) removeNodeToHead(node *structure.DoubleNode) {
 	preNode := node.PrevNode
 	preNode.NextNode = node.NextNode
 	node.NextNode.PrevNode = preNode
