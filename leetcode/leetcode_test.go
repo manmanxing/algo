@@ -62,3 +62,8 @@ func TestLengthOfLongestSubstring2(t *testing.T) {
 	a := "abcabcbb"
 	fmt.Println(lengthOfLongestSubstring2(a))
 }
+
+func TestFindMedianSortedArrays(t *testing.T)  {
+	num1,num2 := []int{1,2},[]int{3,4}
+	fmt.Println(findMedianSortedArrays(num1,num2))
+}

@@ -1,5 +1,9 @@
 package leetcode
 
+import (
+	"sort"
+)
+
 /**
 给定两个大小分别为 m 和 n 的正序（从小到大）数组 nums1 和 nums2。请你找出并返回这两个正序数组的 中位数 。
 
@@ -27,23 +31,18 @@ package leetcode
 */
 
 func findMedianSortedArrays(nums1 []int, nums2 []int) float64 {
-	var middle float64
-	nums1 = append(nums1, nums2...)
-	middle = findMedianSortedArraysnext(nums1)
-	return middle
-}
-
-func findMedianSortedArraysnext(list []int) float64 {
-	if len(list) <= 0 {
+	nums1 = append(nums1,nums2...)
+	sort.Ints(nums1)
+	if len(nums1) <= 0 {
 		return 0
 	}
-
-	if len(list) == 1 {
-		return float64(list[0])
+	if len(nums1) == 1 {
+		return float64(nums1[0])
 	}
-
-	start, end := list[0], list[len(list)-1]
-	for {
-
+	if len(nums1)%2 == 0 {
+		return float64(nums1[len(nums1)/2-1]+nums1[len(nums1)/2]) / 2
+	} else {
+		return float64(nums1[len(nums1)/2])
 	}
 }
+
