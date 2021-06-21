@@ -1,4 +1,4 @@
-package array
+package leetcode
 
 import "strings"
 
@@ -30,14 +30,12 @@ import "strings"
 
 
 
- */
+*/
 
-func longestPalindrome1(s string)string  {
+func longestPalindrome1(s string) string {
 	if len(strings.TrimSpace(s)) <= 1 {
 		return s
 	}
-
-
 
 	return ""
 }

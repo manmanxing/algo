@@ -1,4 +1,4 @@
-package array
+package leetcode
 
 /**
 2 个逆序的链表，要求从低位开始相加，得出结果也逆序输出，返回值是逆序结果链表的头结点。

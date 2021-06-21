@@ -1,4 +1,4 @@
-package array
+package leetcode
 
 /**
 在数组中找到 2 个数之和等于给定值的数字，结果返回 2 个数字在数组中的下标。
