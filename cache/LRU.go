@@ -16,7 +16,7 @@ type LRUCache struct {
 	Nodes    map[interface{}]*structure.DoubleNode //map的key就是DoubleNode里的key，实现查找结点时间复杂度为 O(1)
 }
 
-//初始化
+// InitLRU 初始化
 func InitLRU(capacity int) (lru *LRUCache, err error) {
 	if capacity <= 0 {
 		return nil, errors.New("capacity <= 0")
@@ -31,7 +31,7 @@ func InitLRU(capacity int) (lru *LRUCache, err error) {
 	return
 }
 
-//查询
+// Find 查询
 //如果密钥 (key) 存在于缓存中，则获取密钥的值,然后将查询的结点放置表头，否则返回 -1
 func (lru *LRUCache) Find(key interface{}) interface{} {
 	lru.mutex.Lock()
@@ -50,7 +50,7 @@ func (lru *LRUCache) Find(key interface{}) interface{} {
 	return -1
 }
 
-//新增
+// Add 新增
 //会直接插入到链表头部
 //需要判断容量是否够用，不够就移除掉尾结点再插入新结点
 func (lru *LRUCache) Add(key, value interface{}) {
