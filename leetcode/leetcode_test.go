@@ -63,7 +63,48 @@ func TestLengthOfLongestSubstring2(t *testing.T) {
 	fmt.Println(lengthOfLongestSubstring2(a))
 }
 
-func TestFindMedianSortedArrays(t *testing.T)  {
-	num1,num2 := []int{1,2},[]int{3,4}
-	fmt.Println(findMedianSortedArrays(num1,num2))
+func TestFindMedianSortedArrays(t *testing.T) {
+	num1, num2 := []int{1, 2}, []int{3, 4}
+	fmt.Println(findMedianSortedArrays(num1, num2))
+}
+
+func TestGetMaxAndSecondNum(t *testing.T) {
+	a := []int{1, 2, 3, 4, 5, 6}
+	fmt.Println(getMaxAndSecondNum(a))
+}
+
+func TestReverseKGroup(t *testing.T) {
+	head := &ListNode{
+		Val:  1,
+		Next: nil,
+	}
+
+	cur := head
+	for i := 1; i < 10; i++ {
+		demo := &ListNode{
+			Val:  i+1,
+			Next: nil,
+		}
+		cur.Next = demo
+		cur = cur.Next
+	}
+	print(head)
+	head = reverseKGroup(head, 4)
+	print(head)
+}
+
+func print(head *ListNode)  {
+	if head == nil {
+		return
+	}
+	cur := head
+	result := ""
+	for cur != nil {
+		result += strconv.Itoa(cur.Val)
+		if cur.Next != nil {
+			result += "=>"
+		}
+		cur = cur.Next
+	}
+	fmt.Println(result)
 }
