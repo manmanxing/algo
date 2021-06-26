@@ -59,7 +59,7 @@ func (t *TreeNode) PostOrder() {
 	t.Print()
 }
 
-//层次遍历(广度优先遍历)
+//层次遍历(广度优先遍历 BFS)
 func (t *TreeNode) BreadthFirstSearch() {
 	if t == nil {
 		return
@@ -144,4 +144,8 @@ func (t *TreeNode) Layers() int  {
 	}
 
 	return layer
+}
+
+func CreateNode(v int) *TreeNode {
+	return &TreeNode{Data: v}
 }
