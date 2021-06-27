@@ -108,3 +108,7 @@ func print(head *ListNode)  {
 	}
 	fmt.Println(result)
 }
+
+func TestAddStrings(t *testing.T)  {
+	fmt.Println(addStrings("99898","3489"))
+}
