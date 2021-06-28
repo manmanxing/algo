@@ -231,27 +231,6 @@ func CycleLen(head *SingleNode) int {
 	return len
 }
 
-//两个有序单链表的合并
-//将两个有序链表合并为一个新的有序链表并返回
-func mergeSortedList(l1, l2 *SingleNode) *SingleNode {
-	var res *SingleNode
-	if l1 == nil {
-		return l2
-	}
-	if l2 == nil {
-		return l1
-	}
-	//当l1节点的值大于l2节点的值，那么res指向l2的节点，从l2开始遍历，反之从l1开始
-	//使用递归，不断去找两个链表中比较小的元素，然后result接上那个元素
-	if l1.Data.(int) >= l2.Data.(int) {
-		res = l2
-		res.NextNode = mergeSortedList(l1, l2.NextNode)
-	} else {
-		res = l1
-		res.NextNode = mergeSortedList(l1.NextNode, l2)
-	}
-	return res
-}
 
 //获取单链表中间结点
 func FindMiddleNode(head *SingleNode) *SingleNode {
