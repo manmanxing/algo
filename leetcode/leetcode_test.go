@@ -134,3 +134,8 @@ func TestPartition(t *testing.T)  {
 	head = partition(head.Next,3)
 	print(head)
 }
+
+func TestPivotIndex(t *testing.T)   {
+	a := []int{1,7,3,6,5,6}
+	pivotIndex1(a)
+}
