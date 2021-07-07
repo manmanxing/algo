@@ -139,3 +139,8 @@ func TestPivotIndex(t *testing.T)   {
 	a := []int{1,7,3,6,5,6}
 	pivotIndex1(a)
 }
+
+func TestSearchInsert(t *testing.T)  {
+	a := []int{1,3,5,6}
+	searchInsert3(a,5)
+}

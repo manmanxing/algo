@@ -56,7 +56,7 @@ func pivotIndex1(nums []int) int {
 	return -1
 }
 
-//解法二：左侧和*2+nums[i]=总和
+//解法二：左侧和*2+nums[i]=总和，思路仿照了两数之和的解法
 func pivotIndex2(nums []int) int {
 	s := 0    //总和
 	left := 0 //左侧和
