@@ -35,7 +35,7 @@ func partition(head *ListNode, x int) *ListNode {
 		}
 		head = head.Next
 	}
-	//此时，s是head里最后一个小于3的数以及后面的节点，b 是head里最后一个大于等于3的数以及后面的节点
+	//此时，s是head里最后一个小于3的节点以及后面的节点，b 是head里最后一个大于等于3的节点以及后面的节点
 	//注意：s和b一定有交集：要么 s包含于 b 中(s:2,b:5-2)，要么 b 包含于 a 中(s:2-5,b:5)
 	//设置 small 的最后一个节点 s 的 next 是 big的 next节点
 	//设置 big 的最后一个节点 b 为 nil
