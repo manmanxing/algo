@@ -112,3 +112,25 @@ func print(head *ListNode)  {
 func TestAddStrings(t *testing.T)  {
 	fmt.Println(addStrings("99898","3489"))
 }
+
+func TestPartition(t *testing.T)  {
+	head := &ListNode{
+		Val:  0,
+		Next: nil,
+	}
+	a := []int{1,4,3,2,2,5}
+	cur := head//对head 头节点进行复制
+	for i := range a {
+		demo := &ListNode{
+			Val:  a[i],
+			Next: nil,
+		}
+		//对头节点的 next 进行修改
+		cur.Next = demo
+		cur = cur.Next
+	}
+	//最终 head.next 是我们需要的链表
+	print(head.Next)
+	head = partition(head.Next,3)
+	print(head)
+}
