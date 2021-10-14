@@ -18,6 +18,7 @@ package leetcode
  */
 
 func merge(nums1 []int, m int, nums2 []int, n int)  {
+	//因为 nums1 的长度 = m+n，因此可以从 nums1 的最后一位开始往前推导
 	for p := m + n; m > 0 && n > 0; p-- {
 		if nums2[n-1] >= nums1[m-1] {
 			nums1[p-1] = nums2[n-1]
@@ -27,7 +28,8 @@ func merge(nums1 []int, m int, nums2 []int, n int)  {
 			m--
 		}
 	}
-	//到这里有两种情况：1.m<=0,n>=0  2.m>0,n<=0
+	//到这里有两种情况：1.m<=0,n>0  2.m>0,n<=0
+	//只需要考虑第一种情况
 	for ; n-1 >= 0; n-- {
 		nums1[n-1] = nums2[n-1]
 	}

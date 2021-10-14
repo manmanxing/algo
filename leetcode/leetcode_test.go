@@ -144,3 +144,11 @@ func TestSearchInsert(t *testing.T)  {
 	a := []int{1,3,5,6}
 	searchInsert3(a,5)
 }
+
+func TestCQueue(t *testing.T) {
+	cq := ConstructorCQueue()
+	cq.AppendTail(5)
+	cq.AppendTail(2)
+	cq.DeleteHead()
+	cq.DeleteHead()
+}

@@ -10,6 +10,7 @@ func ReverseList(head *ListNode) *ListNode {
 		return nil
 	}
 
+	//这里注意：不能写成 pre,cur *ListNode := nil,head。因为 nil 不能单独复制给未指定类型的变量
 	var pre,cur *ListNode= nil,head
 
 	for cur != nil {
