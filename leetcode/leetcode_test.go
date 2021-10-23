@@ -152,3 +152,13 @@ func TestCQueue(t *testing.T) {
 	cq.DeleteHead()
 	cq.DeleteHead()
 }
+
+func TestIsValid(t *testing.T) {
+	a := "{[]}"
+	IsValid1(a)
+}
+
+func TestTransferChinese(t *testing.T) {
+	a := 9876543210
+	fmt.Println(TransferChinese(a))
+}
