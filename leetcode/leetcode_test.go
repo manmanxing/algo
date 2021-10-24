@@ -162,3 +162,24 @@ func TestTransferChinese(t *testing.T) {
 	a := 9876543210
 	fmt.Println(TransferChinese(a))
 }
+
+func TestOddEvenList(t *testing.T) {
+	head := &ListNode{
+		Val:  1,
+		Next: &ListNode{
+			Val:  2,
+			Next: &ListNode{
+				Val:  3,
+				Next: &ListNode{
+					Val:  4,
+					Next: &ListNode{
+						Val:  5,
+						Next: nil,
+					},
+				},
+			},
+		},
+	}
+
+	OddEvenList(head)
+}
