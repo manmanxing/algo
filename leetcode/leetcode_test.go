@@ -160,7 +160,7 @@ func TestIsValid(t *testing.T) {
 
 func TestTransferChinese(t *testing.T) {
 	a := 9876543210
-	fmt.Println(TransferChinese(a))
+	fmt.Println(TransferChinese1(a))
 }
 
 func TestOddEvenList(t *testing.T) {

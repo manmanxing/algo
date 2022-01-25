@@ -12,8 +12,7 @@ package leetcode
 
 解题思路二：
 append 将 val 放在前头
- */
-
+*/
 
 func reversePrint1(head *ListNode) (result []int) {
 	//var result []int
@@ -30,9 +29,8 @@ func reversePrint1(head *ListNode) (result []int) {
 func reversePrint2(head *ListNode) []int {
 	var result []int
 	for head != nil {
-		result = append([]int{head.Val},result...)
+		result = append([]int{head.Val}, result...)
 		head = head.Next
 	}
 	return result
 }
-

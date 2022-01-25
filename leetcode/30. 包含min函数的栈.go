@@ -15,8 +15,8 @@ minStack.min();   --> 返回 -2.
 */
 
 type MinStack struct {
-	StackA []int //原stack
-	StackB []int //记录StackA每个时期的最小值
+	StackA []int // 原stack
+	StackB []int // 记录StackA每个时期的最小值
 }
 
 func ConstructorMinStack() MinStack {
@@ -32,31 +32,31 @@ func (this *MinStack) pushB(min int) {
 
 func (this *MinStack) Push(x int) {
 	if len(this.StackA) <= 0 {
-		//第一次
+		// 第一次
 		this.StackA = append(this.StackA, x)
 		this.pushB(x)
 		return
 	}
-	//不是第一次，拿 x 与 stackB的最后一个元素比较大小
+	// 不是第一次，拿 x 与 stackB的最后一个元素比较大小
 	this.StackA = append(this.StackA, x)
 	lastB := this.StackB[len(this.StackB)-1]
-	if x >=  lastB{
+	if x >= lastB {
 		this.pushB(lastB)
-	}else {
+	} else {
 		this.pushB(x)
 	}
 }
 
-//输出最后一个原元素
+// 输出最后一个原元素
 func (this *MinStack) Pop() {
 	lastA := len(this.StackA) - 1
-	lastB := len(this.StackB)-1
+	lastB := len(this.StackB) - 1
 	this.StackA = this.StackA[:lastA]
-	//同时清除stackB最后一个元素
+	// 同时清除stackB最后一个元素
 	this.StackB = this.StackB[:lastB]
 }
 
-//打印最后一个元素
+// 打印最后一个元素
 func (this *MinStack) Top() int {
 	lastA := len(this.StackA) - 1
 	return this.StackA[lastA]
